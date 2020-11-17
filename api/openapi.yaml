@@ -1,0 +1,101 @@
+openapi: 3.0.1
+info:
+  description: worth open api
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: 设备开放API
+  version: 1.0.0
+servers:
+- url: https://iot.worthcloud.net/
+tags:
+- description: oauth
+  name: oauth
+paths:
+  /v1/authenticator/{access_key}/{secret_key}:
+    get:
+      description: 生成token
+      operationId: genToken
+      parameters:
+      - description: access_key
+        in: path
+        name: access_key
+        required: true
+        schema:
+          type: string
+      - description: secret_key
+        in: path
+        name: secret_key
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenTokenResponse'
+          description: successful operation
+      summary: 生成token
+      tags:
+      - authenticator
+  /v1/devices/send_action:
+    post:
+      description: 发送指令
+      operationId: send_action
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionReq'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+          description: successful operation
+      summary: 发送指令
+      tags:
+      - device
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    ActionReq:
+      example:
+        charset: charset
+        device_id: device_id
+        data: data
+      properties:
+        device_id:
+          type: string
+        data:
+          type: string
+        charset:
+          type: string
+      required:
+      - data
+      - device_id
+      type: object
+    GenTokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/APIResponse'
+      - $ref: '#/components/schemas/GenTokenResponse_allOf'
+    APIResponse:
+      description: ""
+      example:
+        code: code
+        message: message
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+      title: APIResponse
+      type: object
+    GenTokenResponse_allOf:
+      properties:
+        data:
+          properties: {}
+          type: object
